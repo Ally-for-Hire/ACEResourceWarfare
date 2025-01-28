@@ -98,11 +98,16 @@ local function onDupeFinish(Data)
     -- Debug Information
     local MainGun            = VehicleStatistics["MaxCaliberGun"]
     local MainGunName        = ""
-    if MainGun != nil then MainGunName = ACF.Weapons["Guns"][MainGun.Id].name or "" end
+    if MainGun != nil then 
+        MainGunName = ACF.Weapons["Guns"][MainGun.Id].name or "" 
+    end
     local EngineCount        = VehicleStatistics["EngineCount"]
-
+    
     -- Armor Statistics
-    local ArmorStatistics = vehicleArmorScan(CreatedEntities, MainGun)
+    local ArmorStatistics = {EffectiveFront = 0, EffectiveSide = 0}
+    if MainGun:IsValid() then 
+        ArmorStatistics = vehicleArmorScan(CreatedEntities, MainGun)
+    end
 
     -- Point Value Information
     local TotalHP            = VehicleStatistics["TotalHP"]
