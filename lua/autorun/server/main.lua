@@ -47,7 +47,7 @@ local function vehicleArmorScan(Entities, MainGun)
 
         if EntClass == "acf_engine" or EntClass == "acf_fuel" or EntClass == "acf_ammo" then
             EffectiveFront = EffectiveFront + recursiveArmorTrace(val, val:GetPos(), FrontDir)
-            EffectiveSide = EffectiveSide + recursiveArmorTrace(val, val:GetPOs(), SideDir)
+            EffectiveSide = EffectiveSide + recursiveArmorTrace(val, val:GetPos(), SideDir)
         end
     end
 
@@ -94,20 +94,18 @@ local function onDupeFinish(Data)
     
     -- Dupe Statistics
     local VehicleStatistics  = vehicleStatScan(CreatedEntities)
+    local ArmorStatistics = {EffectiveFront = 0, EffectiveSide = 0}
     
     -- Debug Information
     local MainGun            = VehicleStatistics["MaxCaliberGun"]
     local MainGunName        = ""
-    if MainGun != nil then 
-        MainGunName = ACF.Weapons["Guns"][MainGun.Id].name or "" 
-    end
     local EngineCount        = VehicleStatistics["EngineCount"]
-    
-    -- Armor Statistics
-    local ArmorStatistics = {EffectiveFront = 0, EffectiveSide = 0}
-    if MainGun:IsValid() then 
-        ArmorStatistics = vehicleArmorScan(CreatedEntities, MainGun)
-    end
+
+    -- These values are fucky, we only want to continue if we know for a fact this is a valid vehicle
+    if MainGun == nil then return end
+
+    MainGunName = ACF.Weapons["Guns"][MainGun.Id].name or "" 
+    ArmorStatistics = vehicleArmorScan(CreatedEntities, MainGun)
 
     -- Point Value Information
     local TotalHP            = VehicleStatistics["TotalHP"]
