@@ -6,21 +6,39 @@ function recursiveArmorTrace(Entity, Position, Direction)
     local Trace     = {Entity = nil}
     local Attempts  = 0
 
-    while Trace["Entity"] != Entity and Attempts < 1000 do
+    while Trace.Entity != Entity and Attempts < 1000 do
         Trace = util.TraceLine({
             start  = Position + Direction * 500,
             endpos = Position,
             filter = Filter
         })
 
-        if Trace["Entity"] == Entity then break end
+        if Trace.Entity == Entity then break end
+        if not IsValid(Trace.entity) then continue end
 
-        table.insert(Filter, Trace["Entity"])
-        --MaxArmor = MaxArmor + PropArmor -- PropArmor currently doesnt work
+        table.insert(Filter, Trace.Entity)
+        ACF_Check(Trace.Entity)
+        
+        -- Stole this from the ACE sourcecode lol
+        local Angle	    	= ACF_GetHitAngle( Trace.HitNormal , Trace.Normal )
+        local Mat			= Trace.Entity.ACF.Material or "RHA"	--very important thing
+        local MatData		= ACE_GetMaterialData( Mat )
+        local armor         = Trace.Entity.ACF.Armour
+        local losArmor		= armor / math.abs( math.cos(math.rad(Angle)) ^ ACF.SlopeEffectFactor ) * MatData["effectiveness"]
+        
+        MaxArmor = MaxArmor + losArmor
         Attempts = Attempts + 1
     end
 
-    return MaxArmor / (#Filter)
+    print(Entity)
+    print("    Attempts: " .. Attempts)
+    -- print("    ArmorMod: " .. ACF.ArmorMod)
+
+    if #Filter == 0 then
+        return 0
+    end
+
+    return MaxArmor 
 end
 
 --- Function: Returns a table of various armor statistics about the tank
@@ -30,17 +48,21 @@ function vehicleArmorScan(Entities, MainGun)
     local EffectiveSide  = 0
     local FrontDir       = MainGun:GetForward()
     local SideDir        = MainGun:GetRight()
+    local Count          = 0
 
     for _, val in pairs(Entities) do
         local EntClass = val:GetClass()
 
-        if EntClass == "acf_engine" or EntClass == "acf_fuel" or EntClass == "acf_ammo" then
-            EffectiveFront = EffectiveFront + recursiveArmorTrace(val, val:GetPos(), FrontDir)
-            EffectiveSide  = EffectiveSide  + recursiveArmorTrace(val, val:GetPos(), SideDir)
+        if EntClass == "acf_engine" or EntClass == "acf_fuel" or EntClass == "acf_ammo" or EntClass == "ace_crewseat_gunner" or EntClass == "ace_crewseat_loader" or EntClass == "ace_crewseat_driver" then
+            EffectiveFront = EffectiveFront + ACE_LOSMultiTrace(val:WorldSpaceCenter() + FrontDir:GetNormalized() * 300, val:WorldSpaceCenter())
+            EffectiveSide  = EffectiveSide  + ACE_LOSMultiTrace(val:WorldSpaceCenter() + SideDir:GetNormalized() * 300, val:WorldSpaceCenter())
+            Count = Count + 1
         end
     end
 
-    return {EffectiveFront = EffectiveFront, EffectiveSide = EffectiveSide}
+    print(Count)
+
+    return {EffectiveFront = EffectiveFront / Count, EffectiveSide = EffectiveSide / Count}
 end
 
 --- Function: Returns a table of various general statistics about the tank

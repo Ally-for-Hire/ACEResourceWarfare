@@ -9,6 +9,6 @@ Color_Gray  = Color(155, 155, 155)
 --- Multipliers
 -- These values adjust the final cost computation for a vehicle
 EngineMul   = 0.5
-PenMul      = 0.83
-SideMul     = 0.1
+PenMul      = 0.9
+SideMul     = 2
 FrontMul    = 1
