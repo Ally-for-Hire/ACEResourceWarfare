@@ -52,17 +52,17 @@ function vehicleArmorScan(Entities, MainGun)
 
     for _, val in pairs(Entities) do
         local EntClass = val:GetClass()
+        local EntCenter = val:WorldSpaceCenter()
 
-        if EntClass == "acf_engine" or EntClass == "acf_fuel" or EntClass == "acf_ammo" or EntClass == "ace_crewseat_gunner" or EntClass == "ace_crewseat_loader" or EntClass == "ace_crewseat_driver" then
-            EffectiveFront = EffectiveFront + ACE_LOSMultiTrace(val:WorldSpaceCenter() + FrontDir:GetNormalized() * 300, val:WorldSpaceCenter())
-            EffectiveSide  = EffectiveSide  + ACE_LOSMultiTrace(val:WorldSpaceCenter() + SideDir:GetNormalized() * 300, val:WorldSpaceCenter())
+        if Criticals[EntClass] then
+            -- Simple placeholder, will make this shoot traces around the bounding box 
+            EffectiveFront = EffectiveFront + ACE_LOSMultiTrace(EntCenter + FrontDir * 300, EntCenter)
+            EffectiveSide  = EffectiveSide  + ACE_LOSMultiTrace(EntCenter + SideDir * 300, EntCenter)
             Count = Count + 1
         end
     end
 
-    print(Count)
-
-    return {EffectiveFront = EffectiveFront / Count, EffectiveSide = EffectiveSide / Count}
+    return {EffectiveFront = EffectiveFront / Count, EffectiveSide = EffectiveSide / Count} -- Count placeholder for surface area
 end
 
 --- Function: Returns a table of various general statistics about the tank

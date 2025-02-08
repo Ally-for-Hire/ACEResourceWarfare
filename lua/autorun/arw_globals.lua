@@ -12,3 +12,14 @@ EngineMul   = 0.5
 PenMul      = 0.9
 SideMul     = 2
 FrontMul    = 1
+
+--- Valid Critical Components
+-- These are the critical components we are looking for when doing our calculations
+Criticals = {
+    ["ace_crewseat_driver"] = true,
+    ["ace_crewseat_loader"] = true,
+    ["ace_crewseat_gunner"] = true,
+    ["acf_ammo"] = true,
+    ["acf_fuel"] = true,
+    ["acf_engine"] = true
+}
