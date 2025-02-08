@@ -56,6 +56,9 @@ function vehicleArmorScan(Entities, MainGun)
 
         if Criticals[EntClass] then
             -- Simple placeholder, will make this shoot traces around the bounding box 
+            -- Current plan: shoot traces at every bounding box position moved slightly towards trace
+            -- If the trace intersects the entity, then we know its not within LOS, and we ignore that
+            -- Otherwise, assume that the entire section has the same armor, and multiply by that area
             EffectiveFront = EffectiveFront + ACE_LOSMultiTrace(EntCenter + FrontDir * 300, EntCenter)
             EffectiveSide  = EffectiveSide  + ACE_LOSMultiTrace(EntCenter + SideDir * 300, EntCenter)
             Count = Count + 1
