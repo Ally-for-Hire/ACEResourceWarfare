@@ -22,23 +22,23 @@ local function onDupeFinish(Data)
     ArmorStatistics   = vehicleArmorScan(CreatedEntities, MainGun)
 
     -- Point Value Information
-    local TotalHP        = VehicleStatistics["TotalHP"]
-    local MaxPen         = VehicleStatistics["MaxPen"]
-    local EffectiveFront = ArmorStatistics["EffectiveFront"]
-    local EffectiveSide  = ArmorStatistics["EffectiveSide"]
+    local TotalHP        = VehicleStatistics["TotalHP"] -- Mostly to discourage high weight tanks
+    local MaxPen         = VehicleStatistics["MaxPen"] -- Max pen is nice, but I need to implement a DPS multiplier, or a reason to not have 0s reload
+    local EffectiveFront = ArmorStatistics["EffectiveFront"] -- Listen, daktank wasn't all bad
+    local EffectiveSide  = ArmorStatistics["EffectiveSide"] -- But I want to do something more complex with this, flat 2x doesn't seem right
     local Price          = EffectiveFront * FrontMul 
                          + EffectiveSide  * SideMul 
                          + MaxPen         * PenMul 
                          + TotalHP        * EngineMul
     
     timer.Create("arw.pointinfotimer", 0.5, 1, function()
-        Player:SendMsg(Color_White, "---------------------------------------------")
-        Player:SendMsg(Color_White, "+ Frontal Armor Cost: " .. math.Round(EffectiveFront, 1) .. "mm x" .. FrontMul .. " = " .. math.Round(EffectiveFront * FrontMul, 1))
-        Player:SendMsg(Color_White, "+ Side Armor Cost: " .. math.Round(EffectiveSide, 1) .. "mm x" .. SideMul .. " = " .. math.Round(EffectiveSide * SideMul, 1))
-        Player:SendMsg(Color_White, "+ Total Horsepower Cost: " .. math.Round(TotalHP, 1) .. "hp x" .. EngineMul .. " = " .. math.Round(TotalHP * EngineMul, 1))
-        Player:SendMsg(Color_White, "+ Maximum Penetration Cost: " .. math.Round(MaxPen, 1) .. "mm x" .. PenMul .. " = " .. math.Round(MaxPen * PenMul, 1))
+        Player:SendMsg(Color_White, "--------------------------------------------------")
+        Player:SendMsg(Color_White, "+ Frontal Cost: " .. math.Round(EffectiveFront, 1) .. "mm x" .. FrontMul .. " = " .. math.Round(EffectiveFront * FrontMul, 1))
+        Player:SendMsg(Color_White, "+ Side Cost: " .. math.Round(EffectiveSide, 1) .. "mm x" .. SideMul .. " = " .. math.Round(EffectiveSide * SideMul, 1))
+        Player:SendMsg(Color_White, "+ Horsepower Cost: " .. math.Round(TotalHP, 1) .. "hp x" .. EngineMul .. " = " .. math.Round(TotalHP * EngineMul, 1))
+        Player:SendMsg(Color_White, "+ Max Pen Cost: " .. math.Round(MaxPen, 1) .. "mm x" .. PenMul .. " = " .. math.Round(MaxPen * PenMul, 1))
         Player:SendMsg(Color_Red,   "= Final Cost: " .. math.Round(Price, 1))
-        Player:SendMsg(Color_White, "---------------------------------------------")
+        Player:SendMsg(Color_White, "--------------------------------------------------")
     end)
 end
 
